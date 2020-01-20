@@ -1,9 +1,12 @@
-var eyes=[];
+var eyes=[];//the object array of eyes
 let ClickTime=[];
+
 let CountOfClicks=0;
+
 let R;
 let XPos=400;
 let YPos;
+
 let a;
 
 var gravity = 0.1;
@@ -11,15 +14,16 @@ var gravity = 0.1;
 function setup() {
    createCanvas(800, 600);
    XPosOfEyes=400;
-   
    ClickTime[0]=0; 
 }
 
 function mousePressed(){ 
   ClickTime.push(ceil(millis()/1000));
   CountOfClicks++;
+   
   R=(ClickTime[CountOfClicks]-ClickTime[CountOfClicks-1])*6;
   YPos=(ClickTime[CountOfClicks]+ClickTime[CountOfClicks-1])*6;
+   
   console.log(R,YPos);  
   eyes.push(new Eye(XPos,R,YPos));
 }
@@ -49,9 +53,9 @@ whiteEyes(){
   stroke(0);
   strokeWeight(1);
   fill(255);
-  ellipse(this.x,this.y,this.r,this.r);
-
-  a=a = atan2(mouseY - this.y, mouseX - this.x);
+  ellipse(this.x,this.y,this.r,this.r);//this part draws the white part of eyes
+  //below draws the black part of eyes
+  a=a = atan2(mouseY - this.y, mouseX - this.x);// how the blackeyes follow mouse
   fill(0);
   ellipse(this.x + 0.2 * this.r * cos(a), this.y + 0.2 * this.r * sin(a), this.r * 0.5, this.r * 0.5);
   }
