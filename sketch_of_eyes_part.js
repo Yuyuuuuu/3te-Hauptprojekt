@@ -1,6 +1,7 @@
 var eyes=[];
-let ClickTime=[];
-let CountOfClicks=0;
+var ClickTime=[];
+var CountOfClicks=0;
+
 let R;
 let XPos=[];
 let YPos;
@@ -9,6 +10,11 @@ let a;
 var gravity = 0.03;
 let spring=0.05;
 let friction=-0.9;
+
+//corlor
+let RR;
+let GG;
+let BB;
 
 function setup() {
    createCanvas(800, 600);
@@ -21,8 +27,22 @@ function keyPressed(){
   CountOfClicks++;
   R=(ClickTime[CountOfClicks]-ClickTime[CountOfClicks-1])*6;
   YPos=(ClickTime[CountOfClicks]+ClickTime[CountOfClicks-1])*6;
-  console.log(ClickTime[CountOfClicks],R,YPos);  
-  eyes.push(new Eye(random(XPos),YPos,R,CountOfClicks,eyes));
+  // console.log(ClickTime[CountOfClicks],R,YPos); 
+  if(keyCode===LEFT_ARROW){
+    RR=255;
+    GG=80;
+    BB=79;
+  }else if (keyCode===UP_ARROW){
+    RR=0;
+    GG=122;
+    BB=135;
+  }else if (keyCode===RIGHT_ARROW){
+    RR=64;
+    GG=64;
+    BB=255;
+  }
+  
+  eyes.push(new Eye(random(XPos),YPos,R,CountOfClicks,eyes,RR,GG,BB));
 }
 
 function draw() {
@@ -34,21 +54,26 @@ function draw() {
     eyes[i].collide();
     eyes[i].moveEyes();
   }
-  } 
+  }
+  
 }
 
 class Eye{
-constructor(x,y,r,idin,oin){
-this.x=x;
-this.y=y;
-this.vx=0;
-this.vy=0;
-this.r=r;
-this.id=idin;
-this.others=oin;
-}
+  constructor(x,y,r,idin,oin,rr,gg,bb){
+  this.x=x;
+  this.y=y;
+  this.vx=0;
+  this.vy=0;
+  this.r=r;
+  this.id=idin;
+  this.others=oin;
+  this.rr=rr;
+  this.gg=gg;
+  this.bb=bb;
 
-collide() {
+  }
+
+  collide() {
     for (let i = this.id + 1; i < ClickTime.length-1; i++) {
       let dx = this.others[i].x - this.x;
       let dy = this.others[i].y - this.y;
@@ -88,25 +113,20 @@ collide() {
     }
   }
   
-whiteEyes(){
-  stroke(0);
-  strokeWeight(1);
-  if(keyCode===LEFT_ARROW){
-    fill(255,80,79);
-  }else if (keyCode===UP_ARROW){
-    fill(0,122,135);
-  }else if (keyCode===RIGHT_ARROW){
-    fill(64,64,255);
-  }
-  ellipse(this.x,this.y,this.r,this.r);
+  whiteEyes(){
+    stroke(0);
+    strokeWeight(1);
+    fill(this.rr,this.gg,this.bb);
+    ellipse(this.x,this.y,this.r,this.r);
   
   }
-blackEyes(){
+
+  blackEyes(){
   a = atan2(mouseY - this.y, mouseX - this.x);
   fill(0);
   ellipse(this.x + 0.2 * this.r * cos(a), this.y + 0.2 * this.r * sin(a), this.r * 0.5, this.r * 0.5);
 
-}
+  }
 
 
 }
