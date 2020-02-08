@@ -5,7 +5,6 @@ let Raduis;
 let XPos;
 let YPos=0;
 
-// let a;
 let v;
 //the value about moving
 var gravity = 0.005;
@@ -14,6 +13,10 @@ let friction=-0.5;
 
 //the varible about the pattern
 let Tx,Ty;
+var sentence=[];
+let m=[0,1,2,3];
+let fontLight;
+
 let E;
 
 // the varible about tracking
@@ -27,10 +30,21 @@ let wwY;
 let bX;
 let bY;
 
+//the varible about photos
+let picture=[];
+let NumerOfPhotos=[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17];
+let photos=[];
+
+function preload(){
+  for(let u=0;u<17;u++){
+    picture[u]=loadImage('assets/photos/photo'+ u +'.png');
+  }
+}
+
 function setup() {
    createCanvas(windowWidth, windowHeight);
    R.push(20,40,60);
-   Tx=0;
+   Tx = -400; 
    Ty=height/2;
 
    video= createCapture(VIDEO);
@@ -58,16 +72,30 @@ function keyPressed(){
 
   v=random(0.08,0.2);
   CountOfClicks++;
+  //eyes.push(new Eye(XPos,YPos,Raduis,eyes,E,v,CountOfClicks,random(NumerOfPhotos)));
   eyes.push(new Eye(XPos,YPos,Raduis,eyes,E,v,CountOfClicks));
+
+  Ty = ceil(random(0,28))*35;  
+  sentence.push(new Text(Tx,Ty,random(m),random(0,1.5)));
+}
+
+function mousePressed(){
+  photos.push(new FOTO(random(NumerOfPhotos),random(windowWidth),random(windowHeight)));
 }
 
 function draw() {
   background(220);
-    text('a 8 seconds information was shared.',Tx,Ty);
+
+  for (let l=0;l<sentence.length;l++){
+    sentence[l].displayText();
+    sentence[l].moveText();
+}
+    // text('a 8 seconds information was shared.',Tx,Ty);
     Tx=Tx+1;
     if (Tx>windowWidth){
       Tx=0;
     }
+
     for (let i=1;i<eyes.length;i++){
     eyes[i].whiteEyes();
     eyes[i].blackEyes();
@@ -76,21 +104,24 @@ function draw() {
     eyes[i].collide();
     eyes[i].moveEyes();
   }
+  for (let j=0;j<photos.length;j++){
+   photos[j].displayPhotos();
+  }
 }
 
 class Eye{
   constructor(x,y,r,others,e,wV,n){
-  this.x=x;
-  this.y=y;
- 
+  this.x=x;//the x position of eyes
+  this.y=y;//the y position of eyes
+  this.r=r;//ths raduis of eyes
+  this.others=others;//ths array of eyes
+  this.e=e;//the magenificatiom times of pattern
+  this.wV=wV;// the velocity of white eyes
+  this.n=n;//the total count of Clicks
+  //this.p=p;//the numerical oder of photos
+
   this.vx=0;
   this.vy=0;
-  this.r=r;
-  this.others=others;
-  this.e=e;
-  this.wV=wV;
-  this.n=n;
-  
   }
 
   collide() {//the action of collide between eyes
@@ -137,7 +168,6 @@ class Eye{
     stroke(0);
     strokeWeight(2);
     fill(255);
-  
       this.x=this.x+(mouseX-this.x)*this.wV;
       this.y=this.y+(mouseY-this.y)*this.wV;
       // this.x=this.x+(pose.nose.x-this.x)*this.wV;
@@ -145,7 +175,7 @@ class Eye{
 
       //estimate the position
       if((this.n-2)<5){
-      
+  
         wwX=constrain(this.x,(windowWidth/5)*(this.n-2)+this.r,(windowWidth/5)*(this.n-1)-this.r);
         wwY=constrain(this.y,this.r,(windowHeight/3)*1-this.r);
  
@@ -161,18 +191,16 @@ class Eye{
  
        }
       ellipse(wwX,wwY,2*this.r,2*this.r);
-  
+      
   }
 
   blackEyes(){
-
   fill(0);
   this.x=mouseX;
   this.y=mouseY;
   // this.x=pose.nose.x;
   // this.y=pose.nose.y;
-  if((this.n-2)<5){
-
+  if((this.n-2)<5){ 
     bX=constrain(this.x, (windowWidth/5)*(this.n-2)+1.4*this.r, (windowWidth/5)*(this.n-1)-1.4*this.r);
     bY=constrain(this.y, 1.4*this.r, (windowHeight/3)*1-1.4*this.r);
 
@@ -228,5 +256,53 @@ class Eye{
   //   endShape(CLOSE);
   //   pop();
   //   }
+
+  // diplayPhotos(){
+  //   scale(0.3);
+  //   image(picture[this.p],this.x,this.y,picture[this.p].width,picture[this.p].height);
+  // }
+}
+
+class Text{
+  constructor(tx,ty,tw,tv){
+   this.tx=tx;
+   this.ty=ty;
+   this.tw=tw;
+   this.tv=tv;
+  }
+   
+   displayText(){
+   // textFont(fontLight);
+   textFont("Futura PT Light");
+   fill(150);
+   stroke(150);
+   strokeWeight(this.tw);
+   textSize(25);
+   text('An 8-second message is shared.',this.tx,this.ty);
+   }
+   
+   moveText(){
+   this.tx=this.tx+this.tv;
+   if (this.tx>windowWidth){
+      this.tx=0;
+   }   
+   }
+ }
+
+class FOTO{
+  constructor(p,x,y){
+   this.p=p;
+   this.x=x;
+   this.y=y;
+  }
+
+displayPhotos(){
+  this.x=mouseX;
+  this.y=mouseY;
+ push();
+ scale(0.3);
+ image(picture[this.p],this.x,this.y,picture[this.p].width,picture[this.p].height);
+ pop();
+}
 
 }
