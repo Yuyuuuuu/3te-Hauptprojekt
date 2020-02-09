@@ -37,6 +37,7 @@ let NumerOfPhotos=[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14];
 let photos=[];
 let ppX;
 let ppY;
+//let starttime;
 
 function preload(){
   for(let u=0;u<15;u++){
@@ -82,7 +83,7 @@ function keyPressed(){
 }
 
 function mousePressed(){
-  photos.push(new FOTO(random(NumerOfPhotos),random(0,1400),random(0,960)));
+  photos.push(new FOTO(random(NumerOfPhotos),random(0,1200),random(0,800),millis()/1000));
 }
 
 function draw() {
@@ -96,7 +97,6 @@ function draw() {
     if (Tx>windowWidth){
       Tx=0;
     }
-
     for (let i=1;i<eyes.length;i++){
     eyes[i].whiteEyes();
     eyes[i].blackEyes();
@@ -108,6 +108,10 @@ function draw() {
   }
   for (let j=0;j<photos.length;j++){
    photos[j].displayPhotos();
+  }
+
+  if(keyCode===UP_ARROW){
+     photos.splice(0,photos.length);
   }
 }
 
@@ -172,28 +176,6 @@ class Eye{
     stroke(0);
     strokeWeight(2);
     fill(255);
-      // this.x=this.x+(mouseX-this.x)*this.wV;
-      // this.y=this.y+(mouseY-this.y)*this.wV;
-      // this.x=this.x+(pose.nose.x-this.x)*this.wV;
-      // this.y=this.y+(pose.nose.y-this.y)*this.wV;
-      
-    // estimate the position
-      // if((this.n-1)<5){
-
-      //   wwX=random((windowWidth/5)*(this.n-1)-this.speed,(windowWidth/5)*(this.n-1)+this.speed);
-      //   wwY=random((windowHeight/4)*1-this.speed,(windowHeight/4)*1+this.speed);
-      
-      //  }else if((this.n-1)>=5 &&(this.n-1)<9 ){
- 
-      //    wwX=(windowWidth/5)*(this.n-5);
-      //    wwY=(windowHeight/4)*2;
- 
-      //  }else if ((this.n-1)>=9){
- 
-      //    wwX=(windowWidth/5)*(this.n-9);
-      //    wwY=(windowHeight/4)*3;
- 
-      //  }
       //estimate the position
       if((this.n-2)<5){
         wwX=constrain(this.x,(windowWidth/5)*(this.n-2)+this.r,(windowWidth/5)*(this.n-1)-this.r);
@@ -215,25 +197,7 @@ class Eye{
 
   blackEyes(){
   fill(0);
-  
- 
-  // this.x=pose.nose.x;
-  // this.y=pose.nose.y;
-  // if((this.n-1)<5){ 
 
-  //   bX=constrain(this.x, (windowWidth/5)*(this.n-1)-0.4*this.r, (windowWidth/5)*(this.n-1)+0.4*this.r);
-  //   bY=constrain(this.y, (windowHeight/4)*1-0.4*this.r, (windowHeight/4)*1+0.4*this.r);
-
-  // }else if((this.n-1)>=5 && (this.n-1)<9){
-
-  //   bX=constrain(this.x, (windowWidth/5)*(this.n-5)-0.4*this.r, (windowWidth/5)*(this.n-5)+0.4*this.r);
-  //   bY=constrain(this.y, (windowHeight/4)*2-0.4*this.r, (windowHeight/4)*2+0.4*this.r);
-
-  // }else if((this.n-1)>=9){
-  //   bX=constrain(this.x, (windowWidth/5)*(this.n-9)-0.4*this.r, (windowWidth/5)*(this.n-9)+0.4*this.r);
-  //   bY=constrain(this.y, (windowHeight/4)*3-0.4*this.r, (windowHeight/4)*3+0.4*this.r);
-    
-  //  }
   if((this.n-2)<5){ 
     this.x=map(pose.nose.x,0,windowWidth,(windowWidth/5)*(this.n-2),(windowWidth/5)*(this.n-1));
     this.y=map(pose.nose.y,0,windowHeight,0,(windowHeight/3)*1);
@@ -310,8 +274,7 @@ class Text{
    this.ty=ty;
    this.tw=tw;
    this.tv=tv;
-  }
-   
+  }  
    displayText(){
    // textFont(fontLight);
    textFont("Futura PT Light");
@@ -331,34 +294,19 @@ class Text{
  }
 
 class FOTO{
-  constructor(p,x,y){
+  constructor(p,x,y,st){
    this.p=p;
    this.x=x;
    this.y=y;
+   this.st=st;
   }
 
 displayPhotos(){
-  // this.x=mouseX;
-  // this.y=mouseY;
-
-  // if(this.p<5){
-  
-  //   ppX=constrain(this.x,(windowWidth/5)*this.p,(windowWidth/5)*(this.p+1));
-  //   ppY=constrain(this.y,0,(windowHeight/3)*1);
-
-  //  }else if(this.p>=5 &&this.p<10 ){
-
-  //    ppX=constrain(this.x,(windowWidth/5)*(this.p-5),(windowWidth/5)*(this.p-4));
-  //    ppY=constrain(this.y,(windowHeight/3)*1,(windowHeight/3)*2);
-
-  //  }else if (this.p>=10){
-
-  //    ppX=constrain(this.x,(windowWidth/5)*(this.p-10),(windowWidth/5)*(this.p-9));
-  //    ppY=constrain(this.y,(windowHeight/3)*2,windowHeight);
-  //  }
  
+ tint(255,255-(millis()/1000-this.st)*15);
  image(picture[this.p],this.x,this.y,0.3*picture[this.p].width,0.3*picture[this.p].height);
-
+ 
 }
+
 
 }
