@@ -37,6 +37,9 @@ let photos=[];
 let ppX;
 let ppY;
 
+let logo;
+let angel=0;
+
 function preload(){
   for(let u=0;u<16;u++){
     picture[u]=loadImage('assets/photos/photo'+ u +'.png');
@@ -45,6 +48,8 @@ function preload(){
   fonttype[1]=loadFont('assets/fonts/Quicksand-Medium.ttf');
   fonttype[2]=loadFont('assets/fonts/Quicksand-Regular.ttf');
   fonttype[3]=loadFont('assets/fonts/Quicksand-Bold.ttf');
+  
+  logo=loadImage('assets/logo/timeshop.png');
 }
 
 function setup() {
@@ -92,6 +97,12 @@ function mousePressed(){
 
 function draw() {
   background(220);
+  push();
+  angel+=0.02;
+  translate(120,120);
+  rotate(angel);
+  image(logo,-80,-80,160,160);
+  pop();
   for (let l=0;l<sentence.length;l++){
     sentence[l].displayText();
     sentence[l].moveText();
