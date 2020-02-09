@@ -4,7 +4,6 @@ let R=[];
 let Raduis;
 let XPos;
 let YPos=0;
-
 let v;
 //the value about moving
 var gravity = 0.005;
@@ -30,28 +29,31 @@ let wwY;
 let bX;
 let bY;
 
+let Speed=1;
+
 //the varible about photos
 let picture=[];
-let NumerOfPhotos=[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17];
+let NumerOfPhotos=[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14];
 let photos=[];
+let ppX;
+let ppY;
 
 function preload(){
-  for(let u=0;u<17;u++){
+  for(let u=0;u<15;u++){
     picture[u]=loadImage('assets/photos/photo'+ u +'.png');
   }
 }
 
 function setup() {
    createCanvas(windowWidth, windowHeight);
-   R.push(20,40,60);
+   R.push(20,40,60);  
    Tx = -400; 
    Ty=height/2;
 
    video= createCapture(VIDEO);
    video.hide();
    poseNet=ml5.poseNet(video,modelLoaded);
-   poseNet.on('pose',gotPoses);
-   
+   poseNet.on('pose',gotPoses);   
 }
 
 function gotPoses(poses){
@@ -69,8 +71,8 @@ function keyPressed(){
   Raduis=random(R);
   XPos=random(windowWidth);
   E=(Raduis/20);//the magenificatiom times of pattern
-
-  v=random(0.08,0.2);
+  Speed=1;
+  v=random(0.1,0.3);
   CountOfClicks++;
   //eyes.push(new Eye(XPos,YPos,Raduis,eyes,E,v,CountOfClicks,random(NumerOfPhotos)));
   eyes.push(new Eye(XPos,YPos,Raduis,eyes,E,v,CountOfClicks));
@@ -80,12 +82,11 @@ function keyPressed(){
 }
 
 function mousePressed(){
-  photos.push(new FOTO(random(NumerOfPhotos),random(windowWidth),random(windowHeight)));
+  photos.push(new FOTO(random(NumerOfPhotos),random(0,1400),random(0,960)));
 }
 
 function draw() {
   background(220);
-
   for (let l=0;l<sentence.length;l++){
     sentence[l].displayText();
     sentence[l].moveText();
@@ -99,10 +100,11 @@ function draw() {
     for (let i=1;i<eyes.length;i++){
     eyes[i].whiteEyes();
     eyes[i].blackEyes();
-    // eyes[i].redHeart();
+    //eyes[i].redHeart();
     //eyes[i].yellowSharing();
-    eyes[i].collide();
-    eyes[i].moveEyes();
+
+    // eyes[i].collide();
+    // eyes[i].moveEyes();
   }
   for (let j=0;j<photos.length;j++){
    photos[j].displayPhotos();
@@ -113,6 +115,7 @@ class Eye{
   constructor(x,y,r,others,e,wV,n){
   this.x=x;//the x position of eyes
   this.y=y;//the y position of eyes
+
   this.r=r;//ths raduis of eyes
   this.others=others;//ths array of eyes
   this.e=e;//the magenificatiom times of pattern
@@ -122,60 +125,77 @@ class Eye{
 
   this.vx=0;
   this.vy=0;
+  this.speed=10;
   }
 
-  collide() {//the action of collide between eyes
-    for (let i = eyes.length+ 1; i < eyes.length-1; i++) {
-          let dx = this.others[i].x - this.x;
-          let dy = this.others[i].y - this.y;
-          let distance = sqrt(dx * dx + dy * dy);
-          let minDist = this.others[i].r + this.r;
-          if (distance < minDist) {
-            let angle = atan2(dy, dx);
-            let targetX = this.x + cos(angle) * minDist;
-            let targetY = this.y + sin(angle) * minDist;
-            let ax = (targetX - this.others[i].x) * spring;
-            let ay = (targetY - this.others[i].y) * spring;
-            this.vx -= ax;
-            this.vy -= ay;
-            this.others[i].vx += ax;
-            this.others[i].vy += ay;
-          }
-        }
-      }
+  // collide() {//the action of collide between eyes
+  //   for (let i = eyes.length+ 1; i < eyes.length-1; i++) {
+  //         let dx = this.others[i].x - this.x;
+  //         let dy = this.others[i].y - this.y;
+  //         let distance = sqrt(dx * dx + dy * dy);
+  //         let minDist = this.others[i].r + this.r;
+  //         if (distance < minDist) {
+  //           let angle = atan2(dy, dx);
+  //           let targetX = this.x + cos(angle) * minDist;
+  //           let targetY = this.y + sin(angle) * minDist;
+  //           let ax = (targetX - this.others[i].x) * spring;
+  //           let ay = (targetY - this.others[i].y) * spring;
+  //           this.vx -= ax;
+  //           this.vy -= ay;
+  //           this.others[i].vx += ax;
+  //           this.others[i].vy += ay;
+  //         }
+  //       }
+  //     }
   
-  moveEyes() { //the movement of eyes
-    this.vy += gravity;
-    this.x += this.vx;
-    this.y += this.vy;
-    if (this.x + this.r / 2 > width) {
-      this.x = width - this.r / 2;
-      this.vx *= friction;
-    } else if (this.x - this.r / 2 < 0) {
-      this.x = this.r / 2;
-      this.vx *= friction;
-    }
-    if (this.y + this.r / 2 > height) {
-      this.y = height - this.r / 2;
-      this.vy *= friction;
-    } else if (this.y - this.r / 2 < 0) {
-      this.y = this.r / 2;
-      this.vy *= friction;
-    }
-  }
-  
+  // //moveEyes() { //the movement of eyes
+  //   this.vy += gravity;
+  //   this.x += this.vx;
+  //   this.y += this.vy;
+  //   if (this.x + this.r / 2 > width) {
+  //     this.x = width - this.r / 2;
+  //     this.vx *= friction;
+  //   } else if (this.x - this.r / 2 < 0) {
+  //     this.x = this.r / 2;
+  //     this.vx *= friction;
+  //   }
+  //   if (this.y + this.r / 2 > height) {
+  //     this.y = height - this.r / 2;
+  //     this.vy *= friction;
+  //   } else if (this.y - this.r / 2 < 0) {
+  //     this.y = this.r / 2;
+  //     this.vy *= friction;
+  //   }
+  // }
+    
   whiteEyes(){
     stroke(0);
     strokeWeight(2);
     fill(255);
-      this.x=this.x+(mouseX-this.x)*this.wV;
-      this.y=this.y+(mouseY-this.y)*this.wV;
+      // this.x=this.x+(mouseX-this.x)*this.wV;
+      // this.y=this.y+(mouseY-this.y)*this.wV;
       // this.x=this.x+(pose.nose.x-this.x)*this.wV;
       // this.y=this.y+(pose.nose.y-this.y)*this.wV;
+      
+    // estimate the position
+      // if((this.n-1)<5){
 
+      //   wwX=random((windowWidth/5)*(this.n-1)-this.speed,(windowWidth/5)*(this.n-1)+this.speed);
+      //   wwY=random((windowHeight/4)*1-this.speed,(windowHeight/4)*1+this.speed);
+      
+      //  }else if((this.n-1)>=5 &&(this.n-1)<9 ){
+ 
+      //    wwX=(windowWidth/5)*(this.n-5);
+      //    wwY=(windowHeight/4)*2;
+ 
+      //  }else if ((this.n-1)>=9){
+ 
+      //    wwX=(windowWidth/5)*(this.n-9);
+      //    wwY=(windowHeight/4)*3;
+ 
+      //  }
       //estimate the position
       if((this.n-2)<5){
-  
         wwX=constrain(this.x,(windowWidth/5)*(this.n-2)+this.r,(windowWidth/5)*(this.n-1)-this.r);
         wwY=constrain(this.y,this.r,(windowHeight/3)*1-this.r);
  
@@ -190,26 +210,47 @@ class Eye{
          wwY=constrain(this.y,(windowHeight/3)*2+this.r,windowHeight-this.r);
  
        }
-      ellipse(wwX,wwY,2*this.r,2*this.r);
-      
+      ellipse(wwX,wwY,2*this.r,2*this.r);   
   }
 
   blackEyes(){
   fill(0);
-  this.x=mouseX;
-  this.y=mouseY;
+  
+ 
   // this.x=pose.nose.x;
   // this.y=pose.nose.y;
+  // if((this.n-1)<5){ 
+
+  //   bX=constrain(this.x, (windowWidth/5)*(this.n-1)-0.4*this.r, (windowWidth/5)*(this.n-1)+0.4*this.r);
+  //   bY=constrain(this.y, (windowHeight/4)*1-0.4*this.r, (windowHeight/4)*1+0.4*this.r);
+
+  // }else if((this.n-1)>=5 && (this.n-1)<9){
+
+  //   bX=constrain(this.x, (windowWidth/5)*(this.n-5)-0.4*this.r, (windowWidth/5)*(this.n-5)+0.4*this.r);
+  //   bY=constrain(this.y, (windowHeight/4)*2-0.4*this.r, (windowHeight/4)*2+0.4*this.r);
+
+  // }else if((this.n-1)>=9){
+  //   bX=constrain(this.x, (windowWidth/5)*(this.n-9)-0.4*this.r, (windowWidth/5)*(this.n-9)+0.4*this.r);
+  //   bY=constrain(this.y, (windowHeight/4)*3-0.4*this.r, (windowHeight/4)*3+0.4*this.r);
+    
+  //  }
   if((this.n-2)<5){ 
+    this.x=map(pose.nose.x,0,windowWidth,(windowWidth/5)*(this.n-2),(windowWidth/5)*(this.n-1));
+    this.y=map(pose.nose.y,0,windowHeight,0,(windowHeight/3)*1);
+
     bX=constrain(this.x, (windowWidth/5)*(this.n-2)+1.4*this.r, (windowWidth/5)*(this.n-1)-1.4*this.r);
     bY=constrain(this.y, 1.4*this.r, (windowHeight/3)*1-1.4*this.r);
 
   }else if((this.n-2)>=5 && (this.n-2)<10){
-
+    this.x=map(pose.nose.x,0,windowWidth,(windowWidth/5)*(this.n-7),(windowWidth/5)*(this.n-6));
+    this.y=map(pose.nose.y,0,windowHeight,(windowHeight/3)*1,(windowHeight/3)*2);
+    
     bX=constrain(this.x, (windowWidth/5)*(this.n-7)+1.4*this.r, (windowWidth/5)*(this.n-6)-1.4*this.r);
     bY=constrain(this.y, (windowHeight/3)*1+1.4*this.r, (windowHeight/3)*2-1.4*this.r);
 
   }else if((this.n-2)>=10){
+    this.x=map(pose.nose.x,0,windowWidth,(windowWidth/5)*(this.n-12),(windowWidth/5)*(this.n-11));
+    this.y=map(pose.nose.y,0,windowHeight,(windowHeight/3)*2,windowHeight);
     bX=constrain(this.x, (windowWidth/5)*(this.n-12)+1.4*this.r, (windowWidth/5)*(this.n-11)-1.4*this.r);
     bY=constrain(this.y, (windowHeight/3)*2+1.4*this.r, windowHeight-1.4*this.r);
   }
@@ -285,7 +326,7 @@ class Text{
    this.tx=this.tx+this.tv;
    if (this.tx>windowWidth){
       this.tx=0;
-   }   
+     }   
    }
  }
 
@@ -297,12 +338,27 @@ class FOTO{
   }
 
 displayPhotos(){
-  this.x=mouseX;
-  this.y=mouseY;
- push();
- scale(0.3);
- image(picture[this.p],this.x,this.y,picture[this.p].width,picture[this.p].height);
- pop();
+  // this.x=mouseX;
+  // this.y=mouseY;
+
+  // if(this.p<5){
+  
+  //   ppX=constrain(this.x,(windowWidth/5)*this.p,(windowWidth/5)*(this.p+1));
+  //   ppY=constrain(this.y,0,(windowHeight/3)*1);
+
+  //  }else if(this.p>=5 &&this.p<10 ){
+
+  //    ppX=constrain(this.x,(windowWidth/5)*(this.p-5),(windowWidth/5)*(this.p-4));
+  //    ppY=constrain(this.y,(windowHeight/3)*1,(windowHeight/3)*2);
+
+  //  }else if (this.p>=10){
+
+  //    ppX=constrain(this.x,(windowWidth/5)*(this.p-10),(windowWidth/5)*(this.p-9));
+  //    ppY=constrain(this.y,(windowHeight/3)*2,windowHeight);
+  //  }
+ 
+ image(picture[this.p],this.x,this.y,0.3*picture[this.p].width,0.3*picture[this.p].height);
+
 }
 
 }
