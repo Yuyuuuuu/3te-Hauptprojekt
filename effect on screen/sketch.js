@@ -155,18 +155,18 @@ class Eye{
     strokeWeight(2);
     fill(255);
       //estimate the position
-      if((this.n-2)<4&&(this.n-2)>=1){
-        wwX=constrain(this.x,(windowWidth/4)*(this.n-2)+this.r,(windowWidth/4)*(this.n-1)-this.r);
+      if((this.n-2)<3){
+        wwX=constrain(this.x,(windowWidth/4)*(this.n-1)+this.r,(windowWidth/4)*(this.n)-this.r);
         wwY=constrain(this.y,this.r,(windowHeight/3)*1-this.r);
  
-       }else if((this.n-2)>=4 &&(this.n-2)<8 ){
+       }else if((this.n-2)>=3 &&(this.n-2)<7 ){
  
-         wwX=constrain(this.x,(windowWidth/4)*(this.n-6)+this.r,(windowWidth/4)*(this.n-5)-this.r);
+         wwX=constrain(this.x,(windowWidth/4)*(this.n-5)+this.r,(windowWidth/4)*(this.n-4)-this.r);
          wwY=constrain(this.y,(windowHeight/3)*1+this.r,(windowHeight/3)*2-this.r);
  
-       }else if ((this.n-2)>=8){
+       }else if ((this.n-2)>=7){
  
-         wwX=constrain(this.x,(windowWidth/4)*(this.n-10)+this.r,(windowWidth/4)*(this.n-9)-this.r);
+         wwX=constrain(this.x,(windowWidth/4)*(this.n-9)+this.r,(windowWidth/4)*(this.n-8)-this.r);
          wwY=constrain(this.y,(windowHeight/3)*2+this.r,windowHeight-this.r);
  
        }
@@ -175,24 +175,24 @@ class Eye{
 
   blackEyes(){
   fill(0);
-  if((this.n-2)<4&&(this.n-2)>=1){ 
-    this.x=map(pose.nose.x,0,windowWidth,(windowWidth/4)*(this.n-2),(windowWidth/4)*(this.n-1));
+  if((this.n-2)<3){ 
+    this.x=map(pose.nose.x,0,windowWidth,(windowWidth/4)*(this.n-1),(windowWidth/4)*(this.n));
     this.y=map(pose.nose.y,0,windowHeight,0,(windowHeight/3)*1);
 
-    bX=constrain(this.x, (windowWidth/4)*(this.n-2)+1.4*this.r, (windowWidth/4)*(this.n-1)-1.4*this.r);
+    bX=constrain(this.x, (windowWidth/4)*(this.n-1)+1.4*this.r, (windowWidth/4)*(this.n)-1.4*this.r);
     bY=constrain(this.y, 1.4*this.r, (windowHeight/3)*1-1.4*this.r);
 
-  }else if((this.n-2)>=4 && (this.n-2)<8){
-    this.x=map(pose.nose.x,0,windowWidth,(windowWidth/4)*(this.n-6),(windowWidth/4)*(this.n-5));
+  }else if((this.n-2)>=3&& (this.n-2)<7){
+    this.x=map(pose.nose.x,0,windowWidth,(windowWidth/4)*(this.n-5),(windowWidth/4)*(this.n-4));
     this.y=map(pose.nose.y,0,windowHeight,(windowHeight/3)*1,(windowHeight/3)*2);
     
-    bX=constrain(this.x, (windowWidth/4)*(this.n-6)+1.4*this.r, (windowWidth/4)*(this.n-5)-1.4*this.r);
+    bX=constrain(this.x, (windowWidth/4)*(this.n-5)+1.4*this.r, (windowWidth/4)*(this.n-4)-1.4*this.r);
     bY=constrain(this.y, (windowHeight/3)*1+1.4*this.r, (windowHeight/3)*2-1.4*this.r);
 
-  }else if((this.n-2)>=8){
-    this.x=map(pose.nose.x,0,windowWidth,(windowWidth/4)*(this.n-10),(windowWidth/4)*(this.n-9));
+  }else if((this.n-2)>=7){
+    this.x=map(pose.nose.x,0,windowWidth,(windowWidth/4)*(this.n-9),(windowWidth/4)*(this.n-8));
     this.y=map(pose.nose.y,0,windowHeight,(windowHeight/3)*2,windowHeight);
-    bX=constrain(this.x, (windowWidth/4)*(this.n-10)+1.4*this.r, (windowWidth/4)*(this.n-9)-1.4*this.r);
+    bX=constrain(this.x, (windowWidth/4)*(this.n-9)+1.4*this.r, (windowWidth/4)*(this.n-8)-1.4*this.r);
     bY=constrain(this.y, (windowHeight/3)*2+1.4*this.r, windowHeight-1.4*this.r);
   }
   ellipse(bX, bY, 2*this.r * 0.4, 2*this.r * 0.4);
