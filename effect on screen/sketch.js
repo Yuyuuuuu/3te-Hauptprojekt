@@ -1,34 +1,33 @@
-var eyes=[];//the whole array of objects(eyes)
 
+//the whole array of objects(eyes)
+var eyes=[];
 let R=[];
 let Raduis;
 let XPos;
 let YPos=0;
 let v;
-//the value about moving
-var gravity = 0.005;
-let spring=0.1;
-let friction=-0.5;
-
-//the varible about the pattern
-let Tx,Ty;
-var sentence=[];
-let m=[0,1,2,3];
-
-let E;
-let fonttype=[];
-// the varible about tracking
-let video;
-let poseNet;
-let pose;
-
 let CountOfClicks=0;
 let wwX;
 let wwY;
 let bX;
 let bY;
-
 let Speed=1;
+
+//the varible about the text
+let Tx,Ty;
+var sentence=[];
+let m=[0,1,2,3];
+let fonttype=[];
+
+//the varible about the pattern
+let E;
+let pattern=[];
+let PATTERN=[0,1,2,3];
+
+// the varible about tracking
+let video;
+let poseNet;
+let pose;
 
 //the varible about photos
 let picture=[];
@@ -36,8 +35,8 @@ let NumerOfPhotos=[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15];
 let photos=[];
 let ppX;
 let ppY;
-
-let logo;
+//the varible about logo
+let logo; 
 let angel=0;
 
 function preload(){
@@ -50,6 +49,12 @@ function preload(){
   fonttype[3]=loadFont('assets/fonts/Quicksand-Bold.ttf');
   
   logo=loadImage('assets/logo/timeshop.png');
+
+  pattern[0]=loadImage('assets/patterns/comment.png');
+  pattern[1]=loadImage('assets/patterns/like.png');
+  pattern[2]=loadImage('assets/patterns/sharing.png');
+  pattern[3]=loadImage('assets/patterns/nothing.png');
+
 }
 
 function setup() {
@@ -80,12 +85,12 @@ function modelLoaded(){
 function keyPressed(){ 
   Raduis=random(R);
   XPos=random(windowWidth);
-  E=(Raduis/20);//the magenificatiom times of pattern
+  E=(Raduis/600);//the magenificatiom times of pattern
   Speed=1;
   v=random(0.1,0.3);
   CountOfClicks++;
   //eyes.push(new Eye(XPos,YPos,Raduis,eyes,E,v,CountOfClicks,random(NumerOfPhotos)));
-  eyes.push(new Eye(XPos,YPos,Raduis,eyes,E,v,CountOfClicks));
+  eyes.push(new Eye(XPos,YPos,Raduis,eyes,E,v,CountOfClicks,random(PATTERN)));
 
   Ty = ceil(random(0,28))*35;  
   sentence.push(new Text(Tx,Ty,random(m),random(0,1.5)));
@@ -101,6 +106,7 @@ function draw() {
   angel+=0.02;
   translate(120,120);
   rotate(angel);
+  tint(255,255);
   image(logo,-80,-80,160,160);
   pop();
   for (let l=0;l<sentence.length;l++){
@@ -115,8 +121,6 @@ function draw() {
     for (let i=1;i<eyes.length;i++){
     eyes[i].whiteEyes();
     eyes[i].blackEyes();
-    //eyes[i].redHeart();
-    //eyes[i].yellowSharing();
   }
   for (let j=0;j<photos.length;j++){
    photos[j].displayPhotos();
@@ -129,18 +133,21 @@ console.log(fonttype[0]);
 }
 
 class Eye{
-  constructor(x,y,r,others,e,wV,n){
+  constructor(x,y,r,others,e,wV,n,pn){
   this.x=x;//the x position of eyes
   this.y=y;//the y position of eyes
 
   this.r=r;//ths raduis of eyes
   this.others=others;//ths array of eyes
+
   this.e=e;//the magenificatiom times of pattern
+
   this.wV=wV;// the velocity of white eyes
   this.n=n;//the total count of Clicks
   this.vx=0;
   this.vy=0;
   this.speed=10;
+  this.pn=pn;
   }
     
   whiteEyes(){
@@ -148,7 +155,7 @@ class Eye{
     strokeWeight(2);
     fill(255);
       //estimate the position
-      if((this.n-2)<4){
+      if((this.n-2)<4&&(this.n-2)>=1){
         wwX=constrain(this.x,(windowWidth/4)*(this.n-2)+this.r,(windowWidth/4)*(this.n-1)-this.r);
         wwY=constrain(this.y,this.r,(windowHeight/3)*1-this.r);
  
@@ -168,7 +175,7 @@ class Eye{
 
   blackEyes(){
   fill(0);
-  if((this.n-2)<4){ 
+  if((this.n-2)<4&&(this.n-2)>=1){ 
     this.x=map(pose.nose.x,0,windowWidth,(windowWidth/4)*(this.n-2),(windowWidth/4)*(this.n-1));
     this.y=map(pose.nose.y,0,windowHeight,0,(windowHeight/3)*1);
 
@@ -189,53 +196,9 @@ class Eye{
     bY=constrain(this.y, (windowHeight/3)*2+1.4*this.r, windowHeight-1.4*this.r);
   }
   ellipse(bX, bY, 2*this.r * 0.4, 2*this.r * 0.4);
+  tint(255,255);
+  image(pattern[this.pn],bX,bY,0.5*this.e*pattern[this.pn].width,0.5*this.e*pattern[this.pn].height);
   }
-
-  // redHeart(){
-  // fill(255,0,0);
-  // noStroke(0);
-  // //strokeWeight(2);
-  // push();
-  // translate(this.x + 0.2 * this.r * cos(a),this.y + 0.2 * this.r * sin(a));//keepe the position do not change
-  // scale(this.e);
-  // beginShape();
-  // vertex(0,0);//1
-  // vertex(-6,6);//2
-  // vertex(-12,0);//3
-  // vertex(-12,-4);//4
-  // vertex(-10,-6);//5
-  // vertex(-8,-6);//6
-  // vertex(-6,-4);//7
-  // vertex(-4,-6);//8
-  // vertex(-2,-6);//9
-  // vertex(0,-4);//10
-  // endShape(CLOSE);
-  // pop();
-  // }
-
-  // yellowSharing(){
-  //   fill(255,211,42);
-  //   noStroke(0);
-  //   //strokeWeight(2);
-  //   push();
-  //   translate(this.x + 0.2 * this.r * cos(a),this.y + 0.2 * this.r * sin(a));//keepe the position do not change
-  //   scale(this.e);
-  //   beginShape();
-  //   vertex(0,0);//1
-  //   vertex(-4,0);//2
-  //   vertex(-4,5);//3
-  //   vertex(-8,5);//4
-  //   vertex(-8,0);//5
-  //   vertex(-12,0);//6
-  //   vertex(-6,-7);//7
-  //   endShape(CLOSE);
-  //   pop();
-  //   }
-
-  // diplayPhotos(){
-  //   scale(0.3);
-  //   image(picture[this.p],this.x,this.y,picture[this.p].width,picture[this.p].height);
-  // }
 }
 
 class Text{
