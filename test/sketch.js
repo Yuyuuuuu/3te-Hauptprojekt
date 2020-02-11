@@ -5,30 +5,34 @@ var eyes_xyr = [];
 let ClickTime=[];
 let CountOfClicks=0;
 let R;
-let XPos=[];
+let XPos=580;
 let YPos;
+let ClickXPos=700;
 let a;
 
 var gravity = 0.03;
 let spring=0.05;
 let friction=-0.9;
 
+let pattern=[];
+let Nx;
+let logo;
+let angel=0;
+let stabil;
 
+function preload(){
+  //  logo=loadImage('timeshop.png');
+  //  logo.id('timeshoplogo');
+   pattern[0]=loadImage('patterns/comment.png');
+   pattern[1]=loadImage('patterns/like.png');
+   pattern[2]=loadImage('patterns/sharing.png');
+   pattern[3]=loadImage('patterns/empty.png');
+}
 
 function setup() {
+    cnv = createCanvas(1680, 1050*3);
  
-    cnv = createCanvas(windowWidth, windowHeight);
-
-    XPos.push(750, 950, 1150);
-    ClickTime[0]=0; 
-        //return augens;
-    /* const iterator = augens.keys();
-    for (const key of iterator) {
-        console.log(key);
-    }  */
-    
-    
-    
+    ClickTime[0]=0;     
 }
 
 function keyTyped() {
@@ -38,150 +42,96 @@ function keyTyped() {
 }
 
 function keyPressed(){ 
-
     ClickTime.push(ceil(millis()/1000));
     CountOfClicks ++;
     R=(ClickTime[CountOfClicks] - ClickTime[CountOfClicks-1]) * 12;
     YPos=(ClickTime[CountOfClicks] + ClickTime[CountOfClicks-1]) * 6;
-   
-    eyes.push(new Eye(z = random(XPos), YPos + 300, R, CountOfClicks, eyes));
+     
+    if(keyCode===OPTION){
+      Nx=0;
+    }else if(keyCode===CONTROL){
+      Nx=1;
+    }else if(keyCode===SHIFT){
+      Nx=2;
+    }
+    else{
+      Nx=3;
+    }
+    // console.log(Nx);
+    eyes.push(new Eye(z = XPos, YPos + 300, R, CountOfClicks, eyes,ClickXPos,Nx));
     eyes_xyr[CountOfClicks - 1] = [z, YPos, R];                     // Hier wird ein Array erstellt um nur die wichtigesten Werte zu verarbeiten: X, Y, R 
     localStorage.setItem(CountOfClicks, JSON.stringify(eyes_xyr));  // Hier werden die Werte in den Local.Storage geladen und gespeichert 
-
-  }
     
-
+  }
 
 function draw() {
   
-    background('#f1c40f');
+    background(220);
+    // push();
+    // angel+=0.02;
+    // translate(120,120);
+    // rotate(angel);
+    // image(logo,-80,-80,160,160);
+    // pop();
     drawTimeline();
+    stroke(0);
+      strokeWeight(1);
+      line(450,0,450,YPos+300);
 
     for (let i = 1;i < eyes.length;i++){
         eyes[i].whiteEyes();
         eyes[i].blackEyes();
+        eyes[i].bluePoint();
+        eyes[i].drawPattern();
         if(mouseIsPressed===true){
         eyes[i].collide();
         eyes[i].moveEyes();
       }
       } 
     
-
+      console.log(Nx);
 }
 
 function eyeArray() {
-  console.log(eyes); 
+ // console.log(eyes); 
 }
-
-
-
-/* function mousePressed() {
-   
-            showImg();
-           //console.log("clicked")   
-} */
-
-
-/* function showImg() {
-
-    imageMode(CENTER);
-    for (let i = 0; i < img.length; i++) {
-        if (augens[i].clicked(mouseX, mouseY)) {
-            image(img[i], 800, 900);
-            augens[i].changeColor();
-            
-            //augens.splice(i,1);
-           //console.log("clicked")
-        }
-        
-    }
-    
-} */
-
-/* class AUGENS{
-    constructor(x, y, r){
-        this.x = x;
-        this.y = y;
-        this.r = r;
-        //this.img = img;
-        this.brightness = 0;
-    }
-    changeColor(){
-        this.brightness = 50;
-    }
-    clicked = function (px, py) {
-
-            var d = dist(px, py, this.x, this.y);
-            if (d < this.r) {
-              
-                return true;
-                //showImg();
-            }else if (d > this.r) {
-                
-                this.brightness = 0;
-                return false;
-            } 
-        }
-        
-        
-    
-    show(){
-        
-            fill(50, 100, 220, this.brightness);
-            ellipse(this.x, this.y, this.r);
-            stroke(0);
-    }
-
-}
-
-
-
-*/
 
 function drawTimeline() {
   
-   
     // Draw second Timeline 
     for (let l = 129; l < windowHeight; l+=12) {
-        stroke(250);
-        line(480, l, 500, l);
+        stroke(0);
+        line(360, l, 380, l);
         
     }
 
      // Draw vertical Timeline 
-    line(500,0,500,windowHeight);
-    
+    line(380,0,380,windowHeight);
     strokeWeight(1);
-    stroke(250);
+    stroke(0);
     
-
     // Draw red Timeline 
     for (let r = 249; r <= windowHeight; r+=720 ) {
 
         let a = stroke('#e74c3c');
-        a.line(450, r, 500, r);
+        a.line(310, r, 350, r);
         
     }
 
     // Draw Timepunkt
     for (let t = 255; t <= windowHeight; t+=720 ) {
-
         textFont('Helvetica');
         textSize(18);
         textStyle(NORMAL); 
         noStroke();
         fill('#3742fa');
-        text('14:25', 400, t);
-        
+        text('14:25', 260, t);   
     }
-
-
-
 }  
 
 
 class Eye{
-    constructor(x,y,r,idin,oin){
+    constructor(x,y,r,idin,oin,cx,numberofpatterns){
     this.x=x;
     this.y=y;
     this.vx=0;
@@ -189,6 +139,8 @@ class Eye{
     this.r=r;
     this.id=idin;
     this.others=oin;
+    this.cx=cx;
+    this.numberofpatterns=numberofpatterns;
     }
     
     collide() {
@@ -231,16 +183,11 @@ class Eye{
         }
       }
       
+
     whiteEyes(){
       stroke(0);
       strokeWeight(1);
-      if(keyCode===LEFT_ARROW){
-        fill(255,80,79);
-      }else if (keyCode===UP_ARROW){
-        fill(0,122,135);
-      }else if (keyCode===RIGHT_ARROW){
-        fill(64,64,255);
-      }
+      fill(255);
       ellipse(this.x, this.y ,this.r,this.r);
       
       }
@@ -251,6 +198,16 @@ class Eye{
     
     }
 
-    
+    bluePoint(){
+      fill(51,0,204,180);
+      noStroke();
+      ellipse(450, this.y ,12,12);
+    }
+
+    drawPattern(){
+      image(pattern[this.numberofpatterns],this.cx,this.y,0.04*pattern[this.numberofpatterns].width,0.04*pattern[this.numberofpatterns].height);
+
+
+    }
 
     }
