@@ -1,4 +1,4 @@
-*{
+/*{
     box-sizing: border-box;
 }
 body{
@@ -20,7 +20,7 @@ body{
     font-size: 40px;
     position: fixed;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-}
+}*/
 
 button{
     width: 20px;
@@ -59,4 +59,15 @@ button{
     text-decoration: none;
     
   
+}
+
+.image {
+    position: fixed;
+    left: 40px;
+    top: 40px;
+    width: 160px;
+    height: 160px;
+    -webkit-animation:spin 4s linear infinite;
+    -moz-animation:spin 4s linear infinite;
+    animation:spin 4s linear infinite;
 }
